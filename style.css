@@ -869,6 +869,31 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
+/* Fix dropdown options styling */
+.form-select option {
+    background: var(--dark-card);
+    color: var(--text-primary);
+    padding: 0.5rem;
+}
+
+.form-select option:hover,
+.form-select option:focus,
+.form-select option:checked {
+    background: var(--accent-color);
+    color: var(--dark-bg);
+}
+
+/* Ensure select text is visible */
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 /* Footer */
 .footer {
     background: var(--dark-card);
