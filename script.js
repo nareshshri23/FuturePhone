@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFormValidation();
     initScrollEffects();
     initComponentInteraction();
+    initMobileOptimizations();
 });
 
 // Navigation functionality
@@ -663,5 +664,123 @@ const throttledScrollHandler = throttle(() => {
 
 window.addEventListener('scroll', throttledScrollHandler);
 
+// Mobile optimizations
+function initMobileOptimizations() {
+    // Auto-close mobile menu when clicking on links
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768 && navbarCollapse.classList.contains('show')) {
+                navbarToggler.click();
+            }
+        });
+    });
+    
+    // Prevent zoom on input focus (iOS)
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('meta[name=viewport]').setAttribute('content', 
+                    'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+            }
+        });
+        
+        input.addEventListener('blur', function() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('meta[name=viewport]').setAttribute('content', 
+                    'width=device-width, initial-scale=1.0');
+            }
+        });
+    });
+    
+    // Optimize scroll performance on mobile
+    let ticking = false;
+    function updateScrollEffects() {
+        // Your scroll effects here
+        ticking = false;
+    }
+    
+    function requestScrollUpdate() {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollEffects);
+            ticking = true;
+        }
+    }
+    
+    // Touch-friendly gallery swipe (enhanced)
+    const gallerySlider = document.querySelector('.gallery-slider');
+    if (gallerySlider) {
+        let startY = 0;
+        let startX = 0;
+        let isScrolling = false;
+        
+        gallerySlider.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].pageY;
+            startX = e.touches[0].pageX;
+            isScrolling = false;
+        }, { passive: true });
+        
+        gallerySlider.addEventListener('touchmove', function(e) {
+            if (isScrolling) return;
+            
+            const currentY = e.touches[0].pageY;
+            const currentX = e.touches[0].pageX;
+            const diffY = Math.abs(currentY - startY);
+            const diffX = Math.abs(currentX - startX);
+            
+            if (diffY > diffX) {
+                isScrolling = true;
+            } else if (diffX > 30) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
+    
+    // Optimize animations for mobile
+    if (window.innerWidth <= 768) {
+        // Reduce animation complexity on mobile
+        const style = document.createElement('style');
+        style.textContent = `
+            @media (max-width: 768px) {
+                *, *::before, *::after {
+                    animation-duration: 0.3s !important;
+                    animation-delay: 0.1s !important;
+                }
+                
+                .phone-mockup {
+                    animation: none !important;
+                }
+                
+                .floating-shapes .shape {
+                    animation-duration: 8s !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Lazy load images for better mobile performance
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => imageObserver.observe(img));
+    }
+}
+
 console.log('🚀 FuturePhone X Mobile Launch Site Loaded Successfully!');
 console.log('✨ All interactive features are now active.');
+console.log('📱 Mobile optimizations initialized.');
